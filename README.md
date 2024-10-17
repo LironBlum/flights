@@ -1,7 +1,7 @@
-## flights
-# Run the app with: `uvicorn app.main:app --reload`
+# flights
+## Run the app with: `uvicorn app.main:app --reload`
 
-# server api requests samples
+## Server api requests samples
 curl -X POST "http://127.0.0.1:8000/flight/add_flight/" \
 -H "Content-Type: application/json" \
 -d '{
