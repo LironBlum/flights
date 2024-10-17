@@ -6,9 +6,11 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = FastAPI()
 app.include_router(flight_router, prefix="/flight", tags=["Flight"])
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
-logger.info("Loading flights data from csv file to memory")
 load_flights()
 
 logger.info("Starting scheduler")
@@ -16,16 +18,17 @@ scheduler = BackgroundScheduler()
 scheduler.start()
 
 
-# Daily scheduled task
 def daily_flight_status_update():
-    ##TODO add try except block
-    logger.info("Updating daily flights status")
     update_flights()
-    logger.info("Daily flights status updated")
 
 
-## scheduled job to run daily
 scheduler.add_job(daily_flight_status_update, "cron", hour=0, minute=0)
+
+
+## use this hack to run daily_flight_status_update on serverr startup
+@app.on_event("startup")
+def startup_event():
+    daily_flight_status_update()
 
 
 @app.on_event("shutdown")
